@@ -4,10 +4,7 @@ import cv2
 import mediapipe as mp
 from pathlib import Path
 
-
-# -----------------------------
 # Paths
-# -----------------------------
 
 DATASET_PATH = Path.home() / "Downloads" / "archive"
 
@@ -21,17 +18,11 @@ OUTPUT_FOLDER = PROJECT_PATH / "outputs"
 DATASET_FILE = OUTPUT_FOLDER / "landmark_dataset.csv"
 MODEL_FILE = PROJECT_PATH / "models" / "hand_landmarker.task"
 
-
-# -----------------------------
 # Settings
-# -----------------------------
 
 TARGET_VIDEOS = 100
 
-
-# -----------------------------
 # Load class labels
-# -----------------------------
 
 def load_class_labels():
 
@@ -57,10 +48,7 @@ def load_class_labels():
 
     return labels
 
-
-# -----------------------------
 # Get existing video IDs
-# -----------------------------
 
 def load_existing_video_ids():
 
@@ -83,10 +71,7 @@ def load_existing_video_ids():
 
     return existing_ids
 
-
-# -----------------------------
 # Extract landmarks
-# -----------------------------
 
 def extract_video_landmarks(video_file, landmarker):
 
@@ -121,6 +106,7 @@ def extract_video_landmarks(video_file, landmarker):
         if result.hand_landmarks:
 
             # Use the first detected hand
+
             hand = result.hand_landmarks[0]
 
             for landmark in hand:
@@ -132,6 +118,7 @@ def extract_video_landmarks(video_file, landmarker):
                 ])
 
         # 21 landmarks × 3 coordinates
+
         if len(frame_landmarks) != 63:
 
             frame_landmarks = [0.0] * 63
@@ -142,10 +129,7 @@ def extract_video_landmarks(video_file, landmarker):
 
     return video_landmarks
 
-
-# -----------------------------
 # Main
-# -----------------------------
 
 def main():
 
@@ -153,25 +137,25 @@ def main():
 
     if not JSON_FILE.exists():
 
-        print("ERROR: JSON file not found:")
+        print("ERROR : JSON file not found.")
         print(JSON_FILE)
         return
 
     if not CLASS_FILE.exists():
 
-        print("ERROR: Class label file not found:")
+        print("ERROR : Class label file not found.")
         print(CLASS_FILE)
         return
 
     if not VIDEOS_FOLDER.exists():
 
-        print("ERROR: Videos folder not found:")
+        print("ERROR : Videos folder not found.")
         print(VIDEOS_FOLDER)
         return
 
     if not MODEL_FILE.exists():
 
-        print("ERROR: MediaPipe model not found:")
+        print("ERROR : MediaPipe model not found.")
         print(MODEL_FILE)
         return
 
@@ -181,6 +165,7 @@ def main():
     )
 
     # Load metadata
+
     with open(
         JSON_FILE,
         "r",
@@ -198,9 +183,11 @@ def main():
     print(f"Target additional videos: {TARGET_VIDEOS}\n")
 
     # Check whether the CSV already exists
+
     file_exists = DATASET_FILE.exists()
 
     # MediaPipe setup
+
     BaseOptions = mp.tasks.BaseOptions
     HandLandmarker = mp.tasks.vision.HandLandmarker
     HandLandmarkerOptions = mp.tasks.vision.HandLandmarkerOptions
@@ -238,6 +225,7 @@ def main():
             writer = csv.writer(csv_file)
 
             # Add header only if file is new
+
             if not file_exists:
 
                 header = [
@@ -259,6 +247,7 @@ def main():
                     break
 
                 # Skip videos already processed
+
                 if video_id in existing_ids:
                     continue
 
@@ -268,6 +257,7 @@ def main():
                 )
 
                 # Skip missing videos
+
                 if not video_file.exists():
 
                     skipped += 1
@@ -297,7 +287,7 @@ def main():
 
                 if not landmarks:
 
-                    print("  No frames found. Skipping.")
+                    print("No frames found. Skipping.")
                     skipped += 1
                     continue
 
@@ -317,11 +307,11 @@ def main():
                     f"{len(landmarks)}"
                 )
 
-    print("\n-----------------------------------")
+    print("\n----------")
     print("Dataset expansion completed.")
-    print(f"Additional videos processed: {processed}")
-    print(f"Videos skipped: {skipped}")
-    print(f"Dataset saved to:")
+    print(f"Additional videos processed : {processed}")
+    print(f"Videos skipped : {skipped}")
+    print(f"Dataset saved to :")
     print(DATASET_FILE)
 
 

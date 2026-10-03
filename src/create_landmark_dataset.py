@@ -85,10 +85,12 @@ def extract_video_landmarks(video_file, landmarker):
                 frame_landmarks.extend(hand_values)
 
         # If no hand is detected, use zeros
+
         if not frame_landmarks:
             frame_landmarks = [0.0] * 63
 
         # Currently using one hand for the dataset
+        
         if len(frame_landmarks) > 63:
             frame_landmarks = frame_landmarks[:63]
 

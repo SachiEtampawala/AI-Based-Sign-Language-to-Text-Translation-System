@@ -1,26 +1,24 @@
 import pandas as pd
 from pathlib import Path
 
-
 PROJECT_PATH = Path(__file__).resolve().parent.parent
 DATASET_FILE = PROJECT_PATH / "outputs" / "landmark_dataset.csv"
 
-
 def main():
 
-    print("Checking class coverage...\n")
+    print("Checking the class coverage...\n")
 
     if not DATASET_FILE.exists():
-        print("ERROR: Dataset file not found:")
+        print("ERROR : Dataset file not found.")
         print(DATASET_FILE)
         return
 
     data = pd.read_csv(DATASET_FILE)
 
-    print("Classes in complete dataset:")
+    print("Classes in complete dataset :")
     print(sorted(data["sign"].unique()))
 
-    print("\nClass distribution by subset:\n")
+    print("\nClass distribution by subset :\n")
 
     coverage = pd.crosstab(
         data["sign"],
@@ -29,7 +27,7 @@ def main():
 
     print(coverage)
 
-    print("\nTraining classes:")
+    print("\nTraining classes :")
     train_classes = set(
         data[data["subset"] == "train"]["sign"]
     )
@@ -41,13 +39,13 @@ def main():
     )
     print(sorted(val_classes))
 
-    print("\nTest classes:")
+    print("\nTest classes :")
     test_classes = set(
         data[data["subset"] == "test"]["sign"]
     )
     print(sorted(test_classes))
 
-    print("\nClasses missing from training:")
+    print("\nClasses missing from training :")
 
     missing_from_training = sorted(
         set(data["sign"].unique()) - train_classes
@@ -60,7 +58,6 @@ def main():
         print("None")
 
     print("\nClass coverage check completed.")
-
 
 if __name__ == "__main__":
     main()

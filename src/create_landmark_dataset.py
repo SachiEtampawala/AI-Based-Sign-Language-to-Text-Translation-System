@@ -4,10 +4,7 @@ import cv2
 import mediapipe as mp
 from pathlib import Path
 
-
-# -----------------------------
 # Project paths
-# -----------------------------
 
 DATASET_PATH = Path.home() / "Downloads" / "archive"
 
@@ -21,17 +18,11 @@ OUTPUT_FOLDER = PROJECT_PATH / "outputs"
 OUTPUT_FILE = OUTPUT_FOLDER / "landmark_dataset.csv"
 MODEL_FILE = PROJECT_PATH / "models" / "hand_landmarker.task"
 
-
-# -----------------------------
 # Settings
-# -----------------------------
 
 MAX_VIDEOS = 20
 
-
-# -----------------------------
 # Load class labels
-# -----------------------------
 
 def load_class_labels():
     labels = {}
@@ -52,10 +43,7 @@ def load_class_labels():
 
     return labels
 
-
-# -----------------------------
 # Extract landmarks from video
-# -----------------------------
 
 def extract_video_landmarks(video_file, landmarker):
     cap = cv2.VideoCapture(str(video_file))
@@ -113,48 +101,47 @@ def extract_video_landmarks(video_file, landmarker):
 
     return video_landmarks
 
-
-# -----------------------------
 # Main
-# -----------------------------
 
 def main():
 
     print("Creating structured landmark dataset...\n")
 
     if not JSON_FILE.exists():
-        print("ERROR: JSON file not found:")
+        print("ERROR : JSON file not found.")
         print(JSON_FILE)
         return
 
     if not CLASS_FILE.exists():
-        print("ERROR: Class label file not found:")
+        print("ERROR : Class label file not found.")
         print(CLASS_FILE)
         return
 
     if not VIDEOS_FOLDER.exists():
-        print("ERROR: Videos folder not found:")
+        print("ERROR : Videos folder not found.")
         print(VIDEOS_FOLDER)
         return
 
     if not MODEL_FILE.exists():
-        print("ERROR: MediaPipe model not found:")
+        print("ERROR : MediaPipe model not found.")
         print(MODEL_FILE)
         return
 
     OUTPUT_FOLDER.mkdir(parents=True, exist_ok=True)
 
     # Load dataset information
+
     with open(JSON_FILE, "r", encoding="utf-8") as file:
         data = json.load(file)
 
     labels = load_class_labels()
 
-    print(f"Dataset entries: {len(data)}")
-    print(f"Class labels: {len(labels)}")
+    print(f"Dataset entries : {len(data)}")
+    print(f"Class labels : {len(labels)}")
     print(f"Processing first {MAX_VIDEOS} available videos...\n")
 
     # MediaPipe setup
+
     BaseOptions = mp.tasks.BaseOptions
     HandLandmarker = mp.tasks.vision.HandLandmarker
     HandLandmarkerOptions = mp.tasks.vision.HandLandmarkerOptions
@@ -186,6 +173,7 @@ def main():
             writer = csv.writer(csv_file)
 
             # CSV header
+
             header = [
                 "video_id",
                 "sign",
@@ -205,6 +193,7 @@ def main():
                 video_file = VIDEOS_FOLDER / f"{video_id}.mp4"
 
                 # Skip missing videos
+
                 if not video_file.exists():
                     skipped_videos += 1
                     continue
@@ -212,6 +201,7 @@ def main():
                 action = information["action"]
 
                 # First value represents the class ID
+
                 action_id = action[0]
 
                 sign = labels.get(
@@ -233,11 +223,12 @@ def main():
                 )
 
                 if not video_landmarks:
-                    print("  No frames found. Skipping.")
+                    print("No frames found. Skipping.")
                     skipped_videos += 1
                     continue
 
                 # Save every frame as one CSV row
+
                 for frame_landmarks in video_landmarks:
 
                     writer.writerow([
@@ -250,16 +241,15 @@ def main():
                 processed_videos += 1
 
                 print(
-                    f"  Frames processed: "
+                    f"  Frames processed : "
                     f"{len(video_landmarks)}"
                 )
 
-    print("\n-----------------------------------")
+    print("\n----------")
     print("Dataset creation completed.")
-    print(f"Videos processed: {processed_videos}")
-    print(f"Videos skipped: {skipped_videos}")
-    print(f"Saved to: {OUTPUT_FILE}")
-
+    print(f"Videos processed : {processed_videos}")
+    print(f"Videos skipped : {skipped_videos}")
+    print(f"Saved to : {OUTPUT_FILE}")
 
 if __name__ == "__main__":
     main()

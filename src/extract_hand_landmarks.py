@@ -2,7 +2,6 @@ import cv2
 import mediapipe as mp
 from pathlib import Path
 
-
 DATASET_PATH = Path.home() / "Downloads" / "archive"
 
 VIDEO_FILE = DATASET_PATH / "videos" / "69422.mp4"
@@ -15,23 +14,23 @@ OUTPUT_FOLDER = PROJECT_PATH / "outputs"
 
 OUTPUT_FILE = OUTPUT_FOLDER / "hand_landmarks.txt"
 
-
 def main():
     print("Extracting hand landmarks...\n")
 
     if not VIDEO_FILE.exists():
-        print("ERROR: Video not found:")
+        print("ERROR : Video not found:")
         print(VIDEO_FILE)
         return
 
     if not MODEL_FILE.exists():
-        print("ERROR: MediaPipe model not found:")
+        print("ERROR : MediaPipe model not found:")
         print(MODEL_FILE)
         return
 
     OUTPUT_FOLDER.mkdir(parents=True, exist_ok=True)
 
     # Create MediaPipe Hand Landmarker
+
     BaseOptions = mp.tasks.BaseOptions
     HandLandmarker = mp.tasks.vision.HandLandmarker
     HandLandmarkerOptions = mp.tasks.vision.HandLandmarkerOptions
@@ -51,7 +50,7 @@ def main():
     cap = cv2.VideoCapture(str(VIDEO_FILE))
 
     if not cap.isOpened():
-        print("ERROR: Could not open the video.")
+        print("ERROR : Could not open the video.")
         return
 
     total_frames = int(cap.get(cv2.CAP_PROP_FRAME_COUNT))
@@ -72,18 +71,21 @@ def main():
                 frame_number += 1
 
                 # Convert OpenCV BGR image to RGB
+
                 rgb_frame = cv2.cvtColor(
                     frame,
                     cv2.COLOR_BGR2RGB
                 )
 
                 # Convert image to MediaPipe format
+
                 mp_image = mp.Image(
                     image_format=mp.ImageFormat.SRGB,
                     data=rgb_frame
                 )
 
                 # Detect hands
+
                 result = landmarker.detect(mp_image)
 
                 if result.hand_landmarks:
@@ -118,12 +120,11 @@ def main():
     cap.release()
 
     print(f"Video: 69422.mp4")
-    print(f"Total frames: {total_frames}")
-    print(f"Frames with detected hands: {frames_with_hands}")
-    print(f"Saved landmarks to: {OUTPUT_FILE}")
+    print(f"Total frames : {total_frames}")
+    print(f"Frames with detected hands : {frames_with_hands}")
+    print(f"Saved landmarks to : {OUTPUT_FILE}")
 
     print("\nHand landmark extraction completed.")
-
 
 if __name__ == "__main__":
     main()
